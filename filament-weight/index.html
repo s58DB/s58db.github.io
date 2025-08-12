@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
-<meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moj kalkulator</title>
-  <link rel="stylesheet" href="../styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalkulator mase filamenta</title>
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
-<body>
+<body class="bg-dark text-light">
+  <div class="container py-5">
+    <h1 class="mb-4 text-center text-primary">Kalkulator mase filamenta</h1>
+    <form id="filamentForm" class="mx-auto" style="max-width: 400px;">
+      <div class="mb-3">
+        <label for="company" class="form-label">Podjetje</label>
+        <select id="company" class="form-select">
+          <option value="245">Prusament (245g)</option>
+          <option value="210">eSun (210g)</option>
+          <option value="190">Sunlu (190g)</option>
+          <option value="230">Polymaker (230g)</option>
+          <option value="200">AzureFilm (200g)</option>
+          <option value="200">3DTrcek (200g)</option>
+          <option value="200">Generic (200g)</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="material" class="form-label">Material</label>
+        <select id="material" class="form-select">
+          <option value="1.24">PLA (1.24 g/cm³)</option>
+          <option value="1.27">PETG (1.27 g/cm³)</option>
+          <option value="1.04">ABS (1.04 g/cm³)</option>
+          <option value="1.07">ASA (1.07 g/cm³)</option>
+          <option value="1.15">Nylon (1.15 g/cm³)</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="totalWeight" class="form-label">Skupna masa koluta (g)</label>
+        <input type="number" id="totalWeight" class="form-control" placeholder="npr. 800" min="0" />
+      </div>
+      <button type="button" class="btn btn-primary w-100" onclick="calculate()">Izračunaj</button>
+    </form>
 
-<h2>Kalkulator teže in dolžine filamenta</h2>
+    <div id="result" class="mt-4 fs-5 text-center text-info"></div>
+  </div>
 
-<label for="company">Podjetje:</label>
-<select id="company">
-    <option value="245">Prusament (245g)</option>
-    <option value="210">eSun (210g)</option>
-    <option value="190">Sunlu (190g)</option>
-    <option value="230">Polymaker (230g)</option>
-    <option value="200">Generic (200g)</option>
-    <option value="200">AzureFilm (200g)</option>
-    <option value="200">3DTrcek (200g)</option>
-</select>
+  <script>
+    function calculate() {
+      const spoolWeight = parseFloat(document.getElementById("company").value);
+      const density = parseFloat(document.getElementById("material").value);
+      const totalWeight = parseFloat(document.getElementById("totalWeight").value);
 
-<label for="material">Material:</label>
-<select id="material">
-    <option value="1.24">PLA (1.24 g/cm³)</option>
-    <option value="1.27">PETG (1.27 g/cm³)</option>
-    <option value="1.04">ABS (1.04 g/cm³)</option>
-    <option value="1.07">ASA (1.07 g/cm³)</option>
-    <option value="1.15">Nylon (1.15 g/cm³)</option>
-</select>
-
-<label for="totalWeight">Skupna masa koluta (g):</label>
-<input type="number" id="totalWeight" placeholder="npr. 800">
-
-<button onclick="calculate()">Izračunaj</button>
-
-<div class="result" id="result"></div>
-
-<script>
-function calculate() {
-    const spoolWeight = parseFloat(document.getElementById("company").value);
-    const density = parseFloat(document.getElementById("material").value);
-    const totalWeight = parseFloat(document.getElementById("totalWeight").value);
-
-    if (isNaN(totalWeight) || totalWeight <= spoolWeight) {
-        document.getElementById("result").innerHTML = "Vnesi veljavno skupno maso (večjo od mase koluta).";
+      if (isNaN(totalWeight) || totalWeight <= spoolWeight) {
+        document.getElementById("result").innerHTML = '<span class="text-danger">Vnesi veljavno skupno maso (večjo od mase koluta).</span>';
         return;
+      }
+
+      const filamentWeight = totalWeight - spoolWeight;
+
+      const diameter = 1.75 / 10; // mm to cm
+      const radius = diameter / 2;
+      const crossSectionArea = Math.PI * radius * radius; // cm²
+
+      const volume = filamentWeight / density; // cm³
+
+      const lengthCm = volume / crossSectionArea; // cm
+
+      const lengthM = lengthCm / 100; // m
+
+      document.getElementById("result").innerHTML =
+        `Masa filamenta: <strong>${filamentWeight.toFixed(1)} g</strong><br>` +
+        `Približna dolžina: <strong>${lengthM.toFixed(2)} m</strong>`;
     }
+  </script>
 
-    const filamentWeight = totalWeight - spoolWeight;
-
-    // Premer filamentu (mm) -> pretvorba v cm
-    const diameter = 1.75 / 10; // 0.175 cm
-    const radius = diameter / 2;
-    const crossSectionArea = Math.PI * radius * radius; // cm²
-
-    // Volumen v cm³
-    const volume = filamentWeight / density;
-
-    // Dolžina v cm
-    const lengthCm = volume / crossSectionArea;
-
-    // Pretvorba v metre
-    const lengthM = lengthCm / 100;
-
-    document.getElementById("result").innerHTML =
-        `Masa filamenta: ${filamentWeight.toFixed(1)} g<br>` +
-        `Približna dolžina: ${lengthM.toFixed(2)} m`;
-}
-</script>
-
+  <!-- Bootstrap JS Bundle with Popper (optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
