@@ -1,0 +1,81 @@
+/* styles.css - skupni slog za vse kalkulatorje */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1e1e2f;
+  color: #cbd5e1;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  background: #2a2a40;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+  max-width: 400px;
+  width: 100%;
+}
+
+h1 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #60a5fa;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+select, input[type=number] {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  background: #1e293b;
+  color: #cbd5e1;
+  box-sizing: border-box;
+}
+
+select:focus, input[type=number]:focus {
+  outline: 2px solid #3b82f6;
+  background: #273449;
+}
+
+button {
+  margin-top: 1.8rem;
+  width: 100%;
+  padding: 0.7rem;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+.result {
+  margin-top: 1.8rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-align: center;
+  color: #a5b4fc;
+  min-height: 3em;
+  line-height: 1.4;
+}
