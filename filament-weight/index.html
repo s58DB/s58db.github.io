@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Filament Weight Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 500px; }
+        label { display: block; margin-top: 10px; }
+        select, input { padding: 5px; width: 100%; box-sizing: border-box; }
+        button { margin-top: 15px; padding: 10px 15px; width: 100%; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Kalkulator mase filamenta</h1>
+
+    <label for="totalMass">Skupna masa koluta + filamenta (g):</label>
+    <input type="number" id="totalMass" step="0.1">
+
+    <label for="brand">Proizvajalec filamenta:</label>
+    <select id="brand" onchange="setSpoolMass()">
+        <option value="">-- Izberi proizvajalca --</option>
+        <option value="245">Prusament (245g)</option>
+        <option value="210">eSun (210g)</option>
+        <option value="190">Sunlu (190g)</option>
+        <option value="230">Polymaker (230g)</option>
+        <option value="200">AzureFilm (200g)</option>
+        <option value="200">3DTrcek (200g)</option>
+        <option value="200">Generic (200g)</option>
+    </select>
+
+    <label for="emptySpoolMass">Masa praznega koluta (g):</label>
+    <input type="number" id="emptySpoolMass" step="0.1">
+
+    <label for="density">Gostota materiala (g/cm³):</label>
+    <input type="number" id="density" value="1.24" step="0.01">
+
+    <label for="diameter">Premer filamenta (mm):</label>
+    <input type="number" id="diameter" value="1.75" step="0.01">
+
+    <button onclick="calculate()">Izračunaj</button>
+
+    <div id="result"></div>
+
+    <script>
+        function setSpoolMass() {
+            let val = document.getElementById('brand').value;
+            if (val) {
+                document.getElementById('emptySpoolMass').value = val;
+            }
+        }
+
+        function calculate() {
+            let total = parseFloat(document.getElementById('totalMass').value);
+            let spool = parseFloat(document.getElementById('emptySpoolMass').value);
+            let density = parseFloat(document.getElementById('density').value);
+            let diameter = parseFloat(document.getElementById('diameter').value) / 10; // mm → cm
+
+            if (isNaN(total) || isNaN(spool) || isNaN(density) || isNaN(diameter)) {
+                document.getElementById('result').innerHTML = "Prosim vnesi vse podatke.";
+                return;
+            }
+
+            let filamentMass = total - spool;
+            if (filamentMass < 0) filamentMass = 0;
+
+            let crossSectionArea = Math.PI * Math.pow(diameter/2, 2); // cm²
+            let length = filamentMass / (density * crossSectionArea); // cm
+
+            document.getElementById('result').innerHTML =
+                `Masa filamenta: ${filamentMass.toFixed(1)} g<br>` +
+                `Dolžina filamenta: ${(length/100).toFixed(2)} m`;
+        }
+    </script>
+</body>
+</html>
