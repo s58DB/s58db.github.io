@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Maps → APRS.fi Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+    input { width: 100%; padding: 8px; margin: 6px 0; }
+    button { padding: 10px; width: 100%; font-size: 16px; }
+    pre { background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Google Maps → APRS.fi koordinatni pretvornik</h2>
+
+<label>Latitude (Google Maps, decimal):</label>
+<input id="lat" placeholder="45.9858337938">
+
+<label>Longitude (Google Maps, decimal):</label>
+<input id="lon" placeholder="15.2795440583">
+
+<button onclick="convert()">Pretvori</button>
+
+<h3>Rezultat (APRS format):</h3>
+<pre id="output"></pre>
+
+<script>
+  // APRS.fi korekcija (nastavljena po tvojem primeru)
+  const LAT_BIAS = -0.00000046;
+  const LON_BIAS =  0.00012261;
+
+  function toDMS(value, isLat) {
+    const dir = value >= 0
+      ? (isLat ? 'N' : 'E')
+      : (isLat ? 'S' : 'W');
+
+    value = Math.abs(value);
+
+    const deg = Math.floor(value);
+    const minFloat = (value - deg) * 60;
+    const min = Math.floor(minFloat);
+    const sec = Math.round((minFloat - min) * 60);
+
+    return `${deg}.${String(min).padStart(2,'0')}.${String(sec).padStart(2,'0')}${dir}`;
+  }
+
+  function convert() {
+    let lat = parseFloat(document.getElementById('lat').value);
+    let lon = parseFloat(document.getElementById('lon').value);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      alert("Vnesi veljavne koordinate.");
+      return;
+    }
+
+    // korekcija proti APRS.fi
+    lat += LAT_BIAS;
+    lon += LON_BIAS;
+
+    const latOut = toDMS(lat, true);
+    const lonOut = toDMS(lon, false);
+
+    document.getElementById('output').textContent =
+      `LAT_POSITION=${latOut}\nLON_POSITION=${lonOut}`;
+  }
+</script>
+
+</body>
+</html>
