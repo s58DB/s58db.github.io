@@ -2,7 +2,7 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <title>Google Maps → APRS.fi Converter</title>
+  <title>APRS Coordinate Converter for SVXLink</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
     input { width: 100%; padding: 8px; margin: 6px 0; }
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<h2>Google Maps → APRS coordinates for use in Local Information in svxlink configure</h2>
+<h2>Tool for converting Google Maps coordinates to APRS format for use in SVXLink Local Information</h2>
 
 <label>Latitude (Google Maps, decimal):</label>
 <input id="lat" placeholder="45.9858337938">
@@ -59,11 +59,40 @@
     lon += LON_BIAS;
 
     const latOut = toDMS(lat, true);
-    const lonOut = toDMS(lon, false);
+const lonOut = toDMS(lon, false);
+const grid = toMaidenhead(lat, lon);
 
-    document.getElementById('output').textContent =
-      `LAT_POSITION=${latOut}\nLON_POSITION=${lonOut}`;
+document.getElementById('output').textContent =
+  `LAT_POSITION=${latOut}\n` +
+  `LON_POSITION=${lonOut}\n` +
+  `GRID=${grid}`;
   }
+
+  function toMaidenhead(lat, lon) {
+  lat += 90;
+  lon += 180;
+
+  const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const a = "abcdefghijklmnopqrstuvwxyz";
+
+  const fieldLon = Math.floor(lon / 20);
+  const fieldLat = Math.floor(lat / 10);
+
+  const squareLon = Math.floor((lon % 20) / 2);
+  const squareLat = Math.floor(lat % 10);
+
+  const subsquareLon = Math.floor(((lon % 2) / 2) * 24);
+  const subsquareLat = Math.floor((lat % 1) * 24);
+
+  return (
+    A[fieldLon] +
+    A[fieldLat] +
+    squareLon +
+    squareLat +
+    a[subsquareLon] +
+    a[subsquareLat]
+  ).toUpperCase();
+}
 </script>
 
 </body>
