@@ -307,8 +307,9 @@
                     <div class="form-grid">
                         <div class="two-col">
                             <div>
-                                <label for="rxName">RX Name</label>
-                                <input id="rxName" value="Rx1" />
+                                <label for="rxLetter">RX Letter</label>
+                                <input id="rxLetter" value="R" />
+                                <div class="small">Get from svxlink.conf</div>
                             </div>
                             <div>
                                 <label for="rxFreq">RX Frequency</label>
@@ -344,8 +345,9 @@
                     <div class="form-grid">
                         <div class="two-col">
                             <div>
-                                <label for="txName">TX Name</label>
-                                <input id="txName" value="Tx1" />
+                                <label for="txLetter">TX Letter</label>
+                                <input id="txLetter" value="T" />
+                                <div class="small">Get from svxlink.conf</div>
                             </div>
                             <div>
                                 <label for="txFreq">TX Frequency</label>
@@ -427,13 +429,11 @@
             lat: "46.04893130796279",
             long: "14.50229644775391",
             loc: "JN76GB",
-            rxName: "Rx1",
             rxFreq: "0.0",
             sqlType: "CTCSS",
             rxAntComment: "Antenna",
             rxAntHeight: "0 m",
             rxDir: "0",
-            txName: "Tx1",
             txFreq: "0.0",
             txPwr: "0",
             txAntComment: "Antenna",
@@ -451,13 +451,11 @@
             lat: document.getElementById("lat"),
             long: document.getElementById("long"),
             loc: document.getElementById("loc"),
-            rxName: document.getElementById("rxName"),
             rxFreq: document.getElementById("rxFreq"),
             sqlType: document.getElementById("sqlType"),
             rxAntComment: document.getElementById("rxAntComment"),
             rxAntHeight: document.getElementById("rxAntHeight"),
             rxDir: document.getElementById("rxDir"),
-            txName: document.getElementById("txName"),
             txFreq: document.getElementById("txFreq"),
             txPwr: document.getElementById("txPwr"),
             txAntComment: document.getElementById("txAntComment"),
@@ -513,20 +511,20 @@
                             loc: fields.loc.value
                         },
                         rx: {
-                            R: {
-                                name: fields.rxName.value,
+                            [fields.rxLetter.value || "R"]: {
+                                name: fields.rxLetter.value,
                                 freq: Number(fields.rxFreq.value),
                                 sqlType: fields.sqlType.value,
                                 ant: {
                                     comment: fields.rxAntComment.value,
-                                    height: fields.rxAntHeight.value,
+            height: fields.rxAntHeight.value,
                                     dir: fields.rxDir.value
                                 }
                             }
                         },
                         tx: {
-                            T: {
-                                name: fields.txName.value,
+                            [fields.txLetter.value || "T"]: {
+                                name: fields.txLetter.value,
                                 freq: Number(fields.txFreq.value),
                                 pwr: fields.txPwr.value,
                                 ant: {
