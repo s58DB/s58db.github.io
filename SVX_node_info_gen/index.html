@@ -317,12 +317,13 @@
                                 <input id="rxName" value="Rx1" />
                             </div>
                         </div>
+
                         <div>
                             <label for="rxFreq">RX Frequency</label>
                             <input id="rxFreq" value="0.0" type="number" step="any" />
                         </div>
-                    </div>
-                    <div>
+
+                        <div>
                             <label for="sqlType">SQL Type</label>
                             <input id="sqlType" value="CTCSS" />
                         </div>
@@ -358,6 +359,11 @@
                                 <label for="txName">TX Name</label>
                                 <input id="txName" value="Tx1" />
                             </div>
+                        </div>
+
+                        <div>
+                            <label for="txFreq">TX Frequency</label>
+                            <input id="txFreq" value="0.0" type="number" step="any" />
                         </div>
 
                         <div class="two-col">
@@ -492,13 +498,10 @@
             lat += 90;
 
             const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
             const fieldLon = Math.floor(lon / 20);
             const fieldLat = Math.floor(lat / 10);
-
             const squareLon = Math.floor((lon % 20) / 2);
             const squareLat = Math.floor(lat % 10);
-
             const subsquareLon = Math.floor(((lon % 2) * 60) / 5);
             const subsquareLat = Math.floor(((lat % 1) * 60) / 2.5);
 
@@ -515,6 +518,7 @@
         function buildJson() {
             const rxLetter = (fields.rxLetter.value || "R").trim();
             const txLetter = (fields.txLetter.value || "T").trim();
+
             return {
                 nodeLocation: fields.nodeLocation.value,
                 hidden: fields.hidden.value === "true",
