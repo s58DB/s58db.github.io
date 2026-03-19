@@ -13,248 +13,402 @@
     />
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f7f7f7;
-            color: #222;
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #dbe3ee;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #16a34a;
+            --secondary-hover: #15803d;
+            --soft: #eef2f7;
+            --code-bg: #0f172a;
+            --code-text: #e5e7eb;
+            --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            --radius: 16px;
         }
 
-        h1, h2, h3 {
-            margin-bottom: 10px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: #fff;
-            padding: 18px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 14px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+        * {
             box-sizing: border-box;
         }
 
-        #map {
-            height: 420px;
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
         }
 
-        .buttons {
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(245, 247, 251, 0.95);
+            backdrop-filter: blur(8px);
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+
+        .hero {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .toolbar {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 16px;
         }
 
         button {
             border: none;
-            padding: 12px 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
+            border-radius: 12px;
+            padding: 11px 16px;
+            font-size: 14px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        .primary {
-            background: #2563eb;
+        .btn-primary {
+            background: var(--primary);
             color: white;
         }
 
-        .secondary {
-            background: #16a34a;
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
             color: white;
         }
 
-        .muted {
-            background: #6b7280;
-            color: white;
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+        }
+
+        .btn-soft {
+            background: var(--soft);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .left,
+        .right {
+            display: grid;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 18px;
+        }
+
+        .card h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
+        .section-note {
+            margin-top: -6px;
+            margin-bottom: 14px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #cfd8e3;
+            background: white;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.15);
+            border-color: var(--primary);
+        }
+
+        #map {
+            width: 100%;
+            height: 420px;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .map-actions {
+            margin-top: 12px;
         }
 
         pre {
-            background: #111827;
-            color: #e5e7eb;
+            margin: 0;
+            background: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 14px;
             padding: 16px;
-            border-radius: 12px;
             overflow: auto;
             white-space: pre-wrap;
             word-break: break-word;
+            min-height: 300px;
         }
 
-        .hint {
-            font-size: 14px;
-            color: #555;
-            margin-top: 6px;
+        .small {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .page {
+                padding: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Node JSON Generator</h1>
+    <div class="page">
+        <div class="topbar">
+            <div class="hero">
+                <h1>Node JSON Generator</h1>
+                <p>Utility page for generating node JSON files with map-based coordinates and direct download.</p>
 
-        <div class="card">
-            <h2>Osnovni podatki</h2>
-            <div class="grid">
-                <div>
-                    <label for="nodeLocation">Node Location</label>
-                    <input id="nodeLocation" value="KUM" />
-                </div>
-                <div>
-                    <label for="hidden">Hidden</label>
-                    <select id="hidden">
-                        <option value="false" selected>false</option>
-                        <option value="true">true</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="sysop">Sysop</label>
-                    <input id="sysop" value="S56CT S58DB" />
-                </div>
-                <div>
-                    <label for="tgKey">Tone key</label>
-                    <input id="tgKey" value="123" />
-                </div>
-                <div>
-                    <label for="tgValue">Talkgroup value</label>
-                    <input id="tgValue" value="293" type="number" />
+                <div class="toolbar">
+                    <button class="btn-primary" type="button" id="generateBtn">Generate JSON</button>
+                    <button class="btn-secondary" type="button" id="downloadBtn">Download JSON</button>
+                    <button class="btn-soft" type="button" id="resetBtn">Reset Defaults</button>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <h2>QTH</h2>
-            <div class="grid">
-                <div>
-                    <label for="qthName">Name</label>
-                    <input id="qthName" value="Kum" />
+        <div class="layout">
+            <div class="left">
+                <div class="card">
+                    <h2>Basic Information</h2>
+                    <div class="form-grid">
+                        <div>
+                            <label for="nodeLocation">Node Location</label>
+                            <input id="nodeLocation" value="NODE" />
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="hidden">Hidden</label>
+                                <select id="hidden">
+                                    <option value="false" selected>false</option>
+                                    <option value="true">true</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="sysop">Sysop</label>
+                                <input id="sysop" value="CALL1 CALL2" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="lat">Latitude</label>
-                    <input id="lat" value="46.08761437458702" />
+
+                <div class="card">
+                    <h2>QTH / Position</h2>
+                    <p class="section-note">Click on the map to fill latitude, longitude and locator automatically.</p>
+
+                    <div class="form-grid">
+                        <div>
+                            <label for="qthName">Location Name</label>
+                            <input id="qthName" value="Location" />
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="lat">Latitude</label>
+                                <input id="lat" value="0.0" />
+                            </div>
+                            <div>
+                                <label for="long">Longitude</label>
+                                <input id="long" value="0.0" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="loc">Locator</label>
+                            <input id="loc" value="AA00AA" />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="long">Longitude</label>
-                    <input id="long" value="15.072246193994943" />
+
+                <div class="card">
+                    <h2>RX Settings</h2>
+                    <div class="form-grid">
+                        <div class="two-col">
+                            <div>
+                                <label for="rxName">RX Name</label>
+                                <input id="rxName" value="Rx1" />
+                            </div>
+                            <div>
+                                <label for="rxFreq">RX Frequency</label>
+                                <input id="rxFreq" value="0.0" type="number" step="any" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="sqlType">SQL Type</label>
+                            <input id="sqlType" value="CTCSS" />
+                        </div>
+
+                        <div>
+                            <label for="rxAntComment">RX Antenna Comment</label>
+                            <input id="rxAntComment" value="Antenna" />
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="rxAntHeight">RX Antenna Height / ASL</label>
+                                <input id="rxAntHeight" value="0 m" />
+                            </div>
+                            <div>
+                                <label for="rxDir">RX Direction</label>
+                                <input id="rxDir" value="0" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="loc">Locator</label>
-                    <input id="loc" value="JN76MC" />
+
+                <div class="card">
+                    <h2>TX Settings</h2>
+                    <div class="form-grid">
+                        <div class="two-col">
+                            <div>
+                                <label for="txName">TX Name</label>
+                                <input id="txName" value="Tx1" />
+                            </div>
+                            <div>
+                                <label for="txFreq">TX Frequency</label>
+                                <input id="txFreq" value="0.0" type="number" step="any" />
+                            </div>
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="txPwr">TX Power</label>
+                                <input id="txPwr" value="0" />
+                            </div>
+                            <div>
+                                <label for="txGain">TX Gain</label>
+                                <input id="txGain" value="0 dBi" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="txAntComment">TX Antenna Comment</label>
+                            <input id="txAntComment" value="Antenna" />
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label for="txAntHeight">TX Antenna Height / ASL</label>
+                                <input id="txAntHeight" value="0 m" />
+                            </div>
+                            <div>
+                                <label for="txDir">TX Direction</label>
+                                <input id="txDir" value="0" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="txType">Antenna Type</label>
+                            <select id="txType">
+                                <option value="Omni" selected>Omni</option>
+                                <option value="Ellipse">Ellipse</option>
+                                <option value="Cardio">Cardio</option>
+                                <option value="Yagi">Yagi</option>
+                                <option value="Depol">Depol</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="hint">Klik na mapo nastavi latitude/longitude in samodejno posodobi locator.</p>
-        </div>
 
-        <div class="card">
-            <h2>Mapa</h2>
-            <div id="map"></div>
-            <div class="buttons">
-                <button class="muted" type="button" id="updateMapBtn">Posodobi marker iz polj</button>
-            </div>
-        </div>
+            <div class="right">
+                <div class="card">
+                    <h2>Map</h2>
+                    <div id="map"></div>
+                    <div class="map-actions">
+                        <button class="btn-soft" type="button" id="updateMapBtn">Update Marker from Fields</button>
+                    </div>
+                </div>
 
-        <div class="card">
-            <h2>RX</h2>
-            <div class="grid">
-                <div>
-                    <label for="rxName">RX Name</label>
-                    <input id="rxName" value="Rx1" />
-                </div>
-                <div>
-                    <label for="rxFreq">RX Frequency</label>
-                    <input id="rxFreq" value="431.525" type="number" step="any" />
-                </div>
-                <div>
-                    <label for="sqlType">SQL Type</label>
-                    <input id="sqlType" value="CTCSS" />
-                </div>
-                <div>
-                    <label for="rxAntComment">RX Antenna Comment</label>
-                    <input id="rxAntComment" value="Diamond x-300" />
-                </div>
-                <div>
-                    <label for="rxAntHeight">RX Antenna Height</label>
-                    <input id="rxAntHeight" value="1219 m" />
-                </div>
-                <div>
-                    <label for="rxDir">RX Direction</label>
-                    <input id="rxDir" value="360" />
+                <div class="card">
+                    <h2>Generated JSON</h2>
+                    <p class="small">The JSON updates when you click Generate JSON, update the map, or reset defaults.</p>
+                    <pre id="output">{}</pre>
                 </div>
             </div>
-        </div>
-
-        <div class="card">
-            <h2>TX</h2>
-            <div class="grid">
-                <div>
-                    <label for="txName">TX Name</label>
-                    <input id="txName" value="Tx1" />
-                </div>
-                <div>
-                    <label for="txFreq">TX Frequency</label>
-                    <input id="txFreq" value="439.125" type="number" step="any" />
-                </div>
-                <div>
-                    <label for="txPwr">Power</label>
-                    <input id="txPwr" value="10" />
-                </div>
-                <div>
-                    <label for="txAntComment">TX Antenna Comment</label>
-                    <input id="txAntComment" value="Diamond x-300" />
-                </div>
-                <div>
-                    <label for="txAntHeight">TX Antenna Height</label>
-                    <input id="txAntHeight" value="1219 m" />
-                </div>
-                <div>
-                    <label for="txDir">TX Direction</label>
-                    <input id="txDir" value="360" />
-                </div>
-                <div>
-                    <label for="txGain">TX Gain</label>
-                    <input id="txGain" value="9 dBi" />
-                </div>
-                <div>
-                    <label for="txType">Antenna Type</label>
-                    <input id="txType" value="omni" />
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Akcije</h2>
-            <div class="buttons">
-                <button class="primary" type="button" id="generateBtn">Generiraj JSON</button>
-                <button class="secondary" type="button" id="downloadBtn">Download JSON</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Rezultat</h2>
-            <pre id="output">{}</pre>
         </div>
     </div>
 
@@ -265,28 +419,59 @@
     ></script>
 
     <script>
-        const latInput = document.getElementById("lat");
-        const longInput = document.getElementById("long");
-        const locInput = document.getElementById("loc");
-        const output = document.getElementById("output");
+        const defaults = {
+            nodeLocation: "NODE",
+            hidden: "false",
+            sysop: "CALL1 CALL2",
+            qthName: "Location",
+            lat: "0.0",
+            long: "0.0",
+            loc: "AA00AA",
+            rxName: "Rx1",
+            rxFreq: "0.0",
+            sqlType: "CTCSS",
+            rxAntComment: "Antenna",
+            rxAntHeight: "0 m",
+            rxDir: "0",
+            txName: "Tx1",
+            txFreq: "0.0",
+            txPwr: "0",
+            txAntComment: "Antenna",
+            txAntHeight: "0 m",
+            txDir: "0",
+            txGain: "0 dBi",
+            txType: "Omni"
+        };
 
-        let marker;
+        const fields = {
+            nodeLocation: document.getElementById("nodeLocation"),
+            hidden: document.getElementById("hidden"),
+            sysop: document.getElementById("sysop"),
+            qthName: document.getElementById("qthName"),
+            lat: document.getElementById("lat"),
+            long: document.getElementById("long"),
+            loc: document.getElementById("loc"),
+            rxName: document.getElementById("rxName"),
+            rxFreq: document.getElementById("rxFreq"),
+            sqlType: document.getElementById("sqlType"),
+            rxAntComment: document.getElementById("rxAntComment"),
+            rxAntHeight: document.getElementById("rxAntHeight"),
+            rxDir: document.getElementById("rxDir"),
+            txName: document.getElementById("txName"),
+            txFreq: document.getElementById("txFreq"),
+            txPwr: document.getElementById("txPwr"),
+            txAntComment: document.getElementById("txAntComment"),
+            txAntHeight: document.getElementById("txAntHeight"),
+            txDir: document.getElementById("txDir"),
+            txGain: document.getElementById("txGain"),
+            txType: document.getElementById("txType"),
+            output: document.getElementById("output")
+        };
 
-        const startLat = parseFloat(latInput.value) || 46.08761437458702;
-        const startLng = parseFloat(longInput.value) || 15.072246193994943;
-
-        const map = L.map("map").setView([startLat, startLng], 11);
-
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: "&copy; OpenStreetMap contributors"
-        }).addTo(map);
-
-        marker = L.marker([startLat, startLng]).addTo(map);
-
-        function updateMarker(lat, lng) {
-            marker.setLatLng([lat, lng]);
-            map.panTo([lat, lng]);
+        function setDefaults() {
+            Object.keys(defaults).forEach((key) => {
+                fields[key].value = defaults[key];
+            });
         }
 
         function maidenhead(lat, lon) {
@@ -294,7 +479,6 @@
             lat += 90;
 
             const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const a = "abcdefghijklmnopqrstuvwxyz";
 
             const fieldLon = Math.floor(lon / 20);
             const fieldLat = Math.floor(lat / 10);
@@ -310,72 +494,65 @@
                 A[fieldLat] +
                 squareLon.toString() +
                 squareLat.toString() +
-                a[subsquareLon].toUpperCase() +
-                a[subsquareLat].toUpperCase()
+                A[subsquareLon] +
+                A[subsquareLat]
             );
         }
 
         function buildJson() {
-            const json = {
-                nodeLocation: document.getElementById("nodeLocation").value,
-                hidden: document.getElementById("hidden").value === "true",
-                sysop: document.getElementById("sysop").value,
-                toneToTalkgroup: {
-                    [document.getElementById("tgKey").value]: Number(document.getElementById("tgValue").value)
-                },
+            return {
+                nodeLocation: fields.nodeLocation.value,
+                hidden: fields.hidden.value === "true",
+                sysop: fields.sysop.value,
                 qth: [
                     {
-                        name: document.getElementById("qthName").value,
+                        name: fields.qthName.value,
                         pos: {
-                            lat: document.getElementById("lat").value,
-                            long: document.getElementById("long").value,
-                            loc: document.getElementById("loc").value
+                            lat: fields.lat.value,
+                            long: fields.long.value,
+                            loc: fields.loc.value
                         },
                         rx: {
                             R: {
-                                name: document.getElementById("rxName").value,
-                                freq: Number(document.getElementById("rxFreq").value),
-                                sqlType: document.getElementById("sqlType").value,
+                                name: fields.rxName.value,
+                                freq: Number(fields.rxFreq.value),
+                                sqlType: fields.sqlType.value,
                                 ant: {
-                                    comment: document.getElementById("rxAntComment").value,
-                                    height: document.getElementById("rxAntHeight").value,
-                                    dir: document.getElementById("rxDir").value
+                                    comment: fields.rxAntComment.value,
+                                    height: fields.rxAntHeight.value,
+                                    dir: fields.rxDir.value
                                 }
                             }
                         },
                         tx: {
                             T: {
-                                name: document.getElementById("txName").value,
-                                freq: Number(document.getElementById("txFreq").value),
-                                pwr: document.getElementById("txPwr").value,
+                                name: fields.txName.value,
+                                freq: Number(fields.txFreq.value),
+                                pwr: fields.txPwr.value,
                                 ant: {
-                                    comment: document.getElementById("txAntComment").value,
-                                    height: document.getElementById("txAntHeight").value,
-                                    dir: document.getElementById("txDir").value,
-                                    gain: document.getElementById("txGain").value,
-                                    Antenna_type: document.getElementById("txType").value
+                                    comment: fields.txAntComment.value,
+                                    height: fields.txAntHeight.value,
+                                    dir: fields.txDir.value,
+                                    gain: fields.txGain.value,
+                                    Antenna_type: fields.txType.value
                                 }
                             }
                         }
                     }
                 ]
             };
-
-            return json;
         }
 
         function generateJSON() {
-            const json = buildJson();
-            output.textContent = JSON.stringify(json, null, 4);
+            fields.output.textContent = JSON.stringify(buildJson(), null, 4);
         }
 
         function downloadJSON() {
-            const json = buildJson();
-            const content = JSON.stringify(json, null, 4);
+            const content = JSON.stringify(buildJson(), null, 4);
             const blob = new Blob([content], { type: "application/json" });
             const url = URL.createObjectURL(blob);
 
-            const fileNameBase = (document.getElementById("nodeLocation").value || "node")
+            const fileNameBase = (fields.nodeLocation.value || "node")
                 .trim()
                 .replace(/\s+/g, "_")
                 .replace(/[^a-zA-Z0-9_-]/g, "");
@@ -386,38 +563,67 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+
             URL.revokeObjectURL(url);
+        }
+
+        const startLat = parseFloat(defaults.lat);
+        const startLng = parseFloat(defaults.long);
+
+        const map = L.map("map").setView([startLat, startLng], 2);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+
+        const marker = L.marker([startLat, startLng]).addTo(map);
+
+        function updateMarker(lat, lng, zoom = null) {
+            marker.setLatLng([lat, lng]);
+
+            if (zoom !== null) {
+                map.setView([lat, lng], zoom);
+            } else {
+                map.panTo([lat, lng]);
+            }
         }
 
         map.on("click", function (e) {
             const lat = e.latlng.lat.toFixed(14);
             const lng = e.latlng.lng.toFixed(14);
 
-            latInput.value = lat;
-            longInput.value = lng;
-            locInput.value = maidenhead(parseFloat(lat), parseFloat(lng));
+            fields.lat.value = lat;
+            fields.long.value = lng;
+            fields.loc.value = maidenhead(parseFloat(lat), parseFloat(lng));
 
-            updateMarker(parseFloat(lat), parseFloat(lng));
+            updateMarker(parseFloat(lat), parseFloat(lng), 11);
             generateJSON();
         });
 
         document.getElementById("updateMapBtn").addEventListener("click", () => {
-            const lat = parseFloat(latInput.value);
-            const lng = parseFloat(longInput.value);
+            const lat = parseFloat(fields.lat.value);
+            const lng = parseFloat(fields.long.value);
 
             if (Number.isNaN(lat) || Number.isNaN(lng)) {
-                alert("Latitude ali longitude nista veljavna.");
+                alert("Latitude or longitude is not valid.");
                 return;
             }
 
-            locInput.value = maidenhead(lat, lng);
-            updateMarker(lat, lng);
+            fields.loc.value = maidenhead(lat, lng);
+            updateMarker(lat, lng, 11);
             generateJSON();
         });
 
         document.getElementById("generateBtn").addEventListener("click", generateJSON);
         document.getElementById("downloadBtn").addEventListener("click", downloadJSON);
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            setDefaults();
+            updateMarker(parseFloat(defaults.lat), parseFloat(defaults.long), 2);
+            generateJSON();
+        });
 
+        setDefaults();
         generateJSON();
     </script>
 </body>
