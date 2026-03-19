@@ -209,6 +209,7 @@
         .small {
             color: var(--muted);
             font-size: 13px;
+            margin-top: 4px;
         }
 
         @media (max-width: 1024px) {
@@ -237,7 +238,7 @@
         <div class="topbar">
             <div class="hero">
                 <h1>Node JSON Generator</h1>
-                <p>Utility page for generating node JSON files with map-based coordinates and direct download.</p>
+                <p>Generate node JSON files with map-based coordinates and direct download.</p>
 
                 <div class="toolbar">
                     <button class="btn-primary" type="button" id="generateBtn">Generate JSON</button>
@@ -287,17 +288,17 @@
                         <div class="two-col">
                             <div>
                                 <label for="lat">Latitude</label>
-                                <input id="lat" value="0.0" />
+                                <input id="lat" value="46.04893130796279" />
                             </div>
                             <div>
                                 <label for="long">Longitude</label>
-                                <input id="long" value="0.0" />
+                                <input id="long" value="14.50229644775391" />
                             </div>
                         </div>
 
                         <div>
                             <label for="loc">Locator</label>
-                            <input id="loc" value="AA00AA" />
+                            <input id="loc" value="JN76GB" />
                         </div>
                     </div>
                 </div>
@@ -429,11 +430,13 @@
             lat: "46.04893130796279",
             long: "14.50229644775391",
             loc: "JN76GB",
+            rxLetter: "R",
             rxFreq: "0.0",
             sqlType: "CTCSS",
             rxAntComment: "Antenna",
             rxAntHeight: "0 m",
             rxDir: "0",
+            txLetter: "T",
             txFreq: "0.0",
             txPwr: "0",
             txAntComment: "Antenna",
@@ -451,11 +454,13 @@
             lat: document.getElementById("lat"),
             long: document.getElementById("long"),
             loc: document.getElementById("loc"),
+            rxLetter: document.getElementById("rxLetter"),
             rxFreq: document.getElementById("rxFreq"),
             sqlType: document.getElementById("sqlType"),
             rxAntComment: document.getElementById("rxAntComment"),
             rxAntHeight: document.getElementById("rxAntHeight"),
             rxDir: document.getElementById("rxDir"),
+            txLetter: document.getElementById("txLetter"),
             txFreq: document.getElementById("txFreq"),
             txPwr: document.getElementById("txPwr"),
             txAntComment: document.getElementById("txAntComment"),
@@ -468,7 +473,9 @@
 
         function setDefaults() {
             Object.keys(defaults).forEach((key) => {
-                fields[key].value = defaults[key];
+                if (fields[key]) {
+                    fields[key].value = defaults[key];
+                }
             });
         }
 
@@ -498,6 +505,9 @@
         }
 
         function buildJson() {
+            const rxLetter = (fields.rxLetter.value || "R").trim();
+            const txLetter = (fields.txLetter.value || "T").trim();
+
             return {
                 nodeLocation: fields.nodeLocation.value,
                 hidden: fields.hidden.value === "true",
@@ -511,20 +521,20 @@
                             loc: fields.loc.value
                         },
                         rx: {
-                            [fields.rxLetter.value || "R"]: {
-                                name: fields.rxLetter.value,
+                            [rxLetter]: {
+                                name: rxLetter,
                                 freq: Number(fields.rxFreq.value),
                                 sqlType: fields.sqlType.value,
                                 ant: {
                                     comment: fields.rxAntComment.value,
-            height: fields.rxAntHeight.value,
+                                    height: fields.rxAntHeight.value,
                                     dir: fields.rxDir.value
                                 }
                             }
                         },
                         tx: {
-                            [fields.txLetter.value || "T"]: {
-                                name: fields.txLetter.value,
+                            [txLetter]: {
+                                name: txLetter,
                                 freq: Number(fields.txFreq.value),
                                 pwr: fields.txPwr.value,
                                 ant: {
@@ -617,11 +627,12 @@
         document.getElementById("downloadBtn").addEventListener("click", downloadJSON);
         document.getElementById("resetBtn").addEventListener("click", () => {
             setDefaults();
-            updateMarker(parseFloat(defaults.lat), parseFloat(defaults.long), 2);
+            updateMarker(parseFloat(defaults.lat), parseFloat(defaults.long), 10);
             generateJSON();
         });
 
         setDefaults();
+        updateMarker(parseFloat(defaults.lat), parseFloat(defaults.long), 10);
         generateJSON();
     </script>
 </body>
