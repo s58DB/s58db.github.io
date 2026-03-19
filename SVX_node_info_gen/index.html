@@ -424,9 +424,9 @@
             hidden: "false",
             sysop: "CALL1 CALL2",
             qthName: "Location",
-            lat: "0.0",
-            long: "0.0",
-            loc: "AA00AA",
+            lat: "46.04893130796279",
+            long: "14.50229644775391",
+            loc: "JN76GB",
             rxName: "Rx1",
             rxFreq: "0.0",
             sqlType: "CTCSS",
@@ -570,7 +570,7 @@
         const startLat = parseFloat(defaults.lat);
         const startLng = parseFloat(defaults.long);
 
-        const map = L.map("map").setView([startLat, startLng], 2);
+        const map = L.map("map").setView([startLat, startLng], 10);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
