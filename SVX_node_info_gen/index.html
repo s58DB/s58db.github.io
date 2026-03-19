@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Node JSON Generator</title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f7f7f7;
+            color: #222;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        #map {
+            height: 420px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: #16a34a;
+            color: white;
+        }
+
+        .muted {
+            background: #6b7280;
+            color: white;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 16px;
+            border-radius: 12px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #555;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Node JSON Generator</h1>
+
+        <div class="card">
+            <h2>Osnovni podatki</h2>
+            <div class="grid">
+                <div>
+                    <label for="nodeLocation">Node Location</label>
+                    <input id="nodeLocation" value="KUM" />
+                </div>
+                <div>
+                    <label for="hidden">Hidden</label>
+                    <select id="hidden">
+                        <option value="false" selected>false</option>
+                        <option value="true">true</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="sysop">Sysop</label>
+                    <input id="sysop" value="S56CT S58DB" />
+                </div>
+                <div>
+                    <label for="tgKey">Tone key</label>
+                    <input id="tgKey" value="123" />
+                </div>
+                <div>
+                    <label for="tgValue">Talkgroup value</label>
+                    <input id="tgValue" value="293" type="number" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>QTH</h2>
+            <div class="grid">
+                <div>
+                    <label for="qthName">Name</label>
+                    <input id="qthName" value="Kum" />
+                </div>
+                <div>
+                    <label for="lat">Latitude</label>
+                    <input id="lat" value="46.08761437458702" />
+                </div>
+                <div>
+                    <label for="long">Longitude</label>
+                    <input id="long" value="15.072246193994943" />
+                </div>
+                <div>
+                    <label for="loc">Locator</label>
+                    <input id="loc" value="JN76MC" />
+                </div>
+            </div>
+            <p class="hint">Klik na mapo nastavi latitude/longitude in samodejno posodobi locator.</p>
+        </div>
+
+        <div class="card">
+            <h2>Mapa</h2>
+            <div id="map"></div>
+            <div class="buttons">
+                <button class="muted" type="button" id="updateMapBtn">Posodobi marker iz polj</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>RX</h2>
+            <div class="grid">
+                <div>
+                    <label for="rxName">RX Name</label>
+                    <input id="rxName" value="Rx1" />
+                </div>
+                <div>
+                    <label for="rxFreq">RX Frequency</label>
+                    <input id="rxFreq" value="431.525" type="number" step="any" />
+                </div>
+                <div>
+                    <label for="sqlType">SQL Type</label>
+                    <input id="sqlType" value="CTCSS" />
+                </div>
+                <div>
+                    <label for="rxAntComment">RX Antenna Comment</label>
+                    <input id="rxAntComment" value="Diamond x-300" />
+                </div>
+                <div>
+                    <label for="rxAntHeight">RX Antenna Height</label>
+                    <input id="rxAntHeight" value="1219 m" />
+                </div>
+                <div>
+                    <label for="rxDir">RX Direction</label>
+                    <input id="rxDir" value="360" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>TX</h2>
+            <div class="grid">
+                <div>
+                    <label for="txName">TX Name</label>
+                    <input id="txName" value="Tx1" />
+                </div>
+                <div>
+                    <label for="txFreq">TX Frequency</label>
+                    <input id="txFreq" value="439.125" type="number" step="any" />
+                </div>
+                <div>
+                    <label for="txPwr">Power</label>
+                    <input id="txPwr" value="10" />
+                </div>
+                <div>
+                    <label for="txAntComment">TX Antenna Comment</label>
+                    <input id="txAntComment" value="Diamond x-300" />
+                </div>
+                <div>
+                    <label for="txAntHeight">TX Antenna Height</label>
+                    <input id="txAntHeight" value="1219 m" />
+                </div>
+                <div>
+                    <label for="txDir">TX Direction</label>
+                    <input id="txDir" value="360" />
+                </div>
+                <div>
+                    <label for="txGain">TX Gain</label>
+                    <input id="txGain" value="9 dBi" />
+                </div>
+                <div>
+                    <label for="txType">Antenna Type</label>
+                    <input id="txType" value="omni" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Akcije</h2>
+            <div class="buttons">
+                <button class="primary" type="button" id="generateBtn">Generiraj JSON</button>
+                <button class="secondary" type="button" id="downloadBtn">Download JSON</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Rezultat</h2>
+            <pre id="output">{}</pre>
+        </div>
+    </div>
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
+
+    <script>
+        const latInput = document.getElementById("lat");
+        const longInput = document.getElementById("long");
+        const locInput = document.getElementById("loc");
+        const output = document.getElementById("output");
+
+        let marker;
+
+        const startLat = parseFloat(latInput.value) || 46.08761437458702;
+        const startLng = parseFloat(longInput.value) || 15.072246193994943;
+
+        const map = L.map("map").setView([startLat, startLng], 11);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+
+        marker = L.marker([startLat, startLng]).addTo(map);
+
+        function updateMarker(lat, lng) {
+            marker.setLatLng([lat, lng]);
+            map.panTo([lat, lng]);
+        }
+
+        function maidenhead(lat, lon) {
+            lon += 180;
+            lat += 90;
+
+            const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const a = "abcdefghijklmnopqrstuvwxyz";
+
+            const fieldLon = Math.floor(lon / 20);
+            const fieldLat = Math.floor(lat / 10);
+
+            const squareLon = Math.floor((lon % 20) / 2);
+            const squareLat = Math.floor(lat % 10);
+
+            const subsquareLon = Math.floor(((lon % 2) * 60) / 5);
+            const subsquareLat = Math.floor(((lat % 1) * 60) / 2.5);
+
+            return (
+                A[fieldLon] +
+                A[fieldLat] +
+                squareLon.toString() +
+                squareLat.toString() +
+                a[subsquareLon].toUpperCase() +
+                a[subsquareLat].toUpperCase()
+            );
+        }
+
+        function buildJson() {
+            const json = {
+                nodeLocation: document.getElementById("nodeLocation").value,
+                hidden: document.getElementById("hidden").value === "true",
+                sysop: document.getElementById("sysop").value,
+                toneToTalkgroup: {
+                    [document.getElementById("tgKey").value]: Number(document.getElementById("tgValue").value)
+                },
+                qth: [
+                    {
+                        name: document.getElementById("qthName").value,
+                        pos: {
+                            lat: document.getElementById("lat").value,
+                            long: document.getElementById("long").value,
+                            loc: document.getElementById("loc").value
+                        },
+                        rx: {
+                            R: {
+                                name: document.getElementById("rxName").value,
+                                freq: Number(document.getElementById("rxFreq").value),
+                                sqlType: document.getElementById("sqlType").value,
+                                ant: {
+                                    comment: document.getElementById("rxAntComment").value,
+                                    height: document.getElementById("rxAntHeight").value,
+                                    dir: document.getElementById("rxDir").value
+                                }
+                            }
+                        },
+                        tx: {
+                            T: {
+                                name: document.getElementById("txName").value,
+                                freq: Number(document.getElementById("txFreq").value),
+                                pwr: document.getElementById("txPwr").value,
+                                ant: {
+                                    comment: document.getElementById("txAntComment").value,
+                                    height: document.getElementById("txAntHeight").value,
+                                    dir: document.getElementById("txDir").value,
+                                    gain: document.getElementById("txGain").value,
+                                    Antenna_type: document.getElementById("txType").value
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+
+            return json;
+        }
+
+        function generateJSON() {
+            const json = buildJson();
+            output.textContent = JSON.stringify(json, null, 4);
+        }
+
+        function downloadJSON() {
+            const json = buildJson();
+            const content = JSON.stringify(json, null, 4);
+            const blob = new Blob([content], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const fileNameBase = (document.getElementById("nodeLocation").value || "node")
+                .trim()
+                .replace(/\s+/g, "_")
+                .replace(/[^a-zA-Z0-9_-]/g, "");
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${fileNameBase || "node"}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        map.on("click", function (e) {
+            const lat = e.latlng.lat.toFixed(14);
+            const lng = e.latlng.lng.toFixed(14);
+
+            latInput.value = lat;
+            longInput.value = lng;
+            locInput.value = maidenhead(parseFloat(lat), parseFloat(lng));
+
+            updateMarker(parseFloat(lat), parseFloat(lng));
+            generateJSON();
+        });
+
+        document.getElementById("updateMapBtn").addEventListener("click", () => {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(longInput.value);
+
+            if (Number.isNaN(lat) || Number.isNaN(lng)) {
+                alert("Latitude ali longitude nista veljavna.");
+                return;
+            }
+
+            locInput.value = maidenhead(lat, lng);
+            updateMarker(lat, lng);
+            generateJSON();
+        });
+
+        document.getElementById("generateBtn").addEventListener("click", generateJSON);
+        document.getElementById("downloadBtn").addEventListener("click", downloadJSON);
+
+        generateJSON();
+    </script>
+</body>
+</html>
