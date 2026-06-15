@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spring antena kalkulator</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:950px;margin:auto;padding:20px;background:#f4f4f4;color:#111}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 12px #0002;margin-bottom:18px}
+    label{display:block;margin-top:12px;font-weight:bold}
+    input{width:100%;padding:10px;margin-top:5px;font-size:16px;box-sizing:border-box}
+    button{width:100%;padding:12px;margin-top:18px;font-size:18px;font-weight:bold;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:700px){.grid{grid-template-columns:1fr}}
+    .out{background:#eef3ff;border-left:5px solid #3157d5;padding:12px;border-radius:8px}
+    .warn{background:#fff3cd;border-left:5px solid #d39e00;padding:12px;border-radius:8px;margin-top:12px}
+    svg{width:100%;height:auto;background:#fafafa;border:1px solid #ddd;border-radius:10px}
+    code{background:#eee;padding:2px 5px;border-radius:4px}
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Spring / helikalna antena kalkulator</h1>
+  <p>Vnesi prostor, ki ga imaš na voljo. Program izračuna približen premer navitja, število navojev, dolžino žice pred navijanjem in korak navitja.</p>
+</div>
+
+<div class="card">
+  <h2>Podatki</h2>
+
+  <label>Frekvenca [MHz]</label>
+  <input id="freq" type="number" step="0.001" value="433.775">
+
+  <label>Premer luknje / prostora [mm]</label>
+  <input id="hole" type="number" step="0.1" value="8">
+
+  <label>Maksimalna dolžina antene [mm]</label>
+  <input id="maxLen" type="number" step="0.1" value="30">
+
+  <label>Premer žice [mm]</label>
+  <input id="wire" type="number" step="0.1" value="1">
+
+  <button onclick="calc()">Izračunaj</button>
+</div>
+
+<div class="card">
+  <h2>Skica pomembnih mer</h2>
+  <svg viewBox="0 0 850 390">
+    <defs>
+      <marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#3157d5"/>
+      </marker>
+    </defs>
+
+    <rect x="55" y="155" width="70" height="70" rx="8" fill="#999"/>
+    <text x="45" y="145" font-size="18">priklop</text>
+
+    <path d="M150 190
+      C165 95, 205 95, 220 190
+      C235 285, 275 285, 290 190
+      C305 95, 345 95, 360 190
+      C375 285, 415 285, 430 190
+      C445 95, 485 95, 500 190
+      C515 285, 555 285, 570 190
+      C585 95, 625 95, 640 190"
+      fill="none" stroke="#c27a00" stroke-width="12" stroke-linecap="round"/>
+
+    <line x1="150" y1="60" x2="640" y2="60" stroke="#3157d5" stroke-width="3" marker-start="url(#a)" marker-end="url(#a)"/>
+    <text x="295" y="45" font-size="20">maks. dolžina antene</text>
+
+    <line x1="690" y1="95" x2="690" y2="285" stroke="#3157d5" stroke-width="3" marker-start="url(#a)" marker-end="url(#a)"/>
+    <text x="710" y="190" font-size="22">premer luknje</text>
+
+    <line x1="220" y1="320" x2="290" y2="320" stroke="#3157d5" stroke-width="3" marker-start="url(#a)" marker-end="url(#a)"/>
+    <text x="230" y="350" font-size="20">korak</text>
+
+    <circle cx="500" cy="190" r="7" fill="#333"/>
+    <line x1="500" y1="190" x2="555" y2="125" stroke="#3157d5" stroke-width="2" marker-end="url(#a)"/>
+    <text x="560" y="125" font-size="20">premer žice</text>
+  </svg>
+</div>
+
+<div class="card">
+  <h2>Rezultati</h2>
+  <div id="results" class="grid"></div>
+  <div id="warning"></div>
+</div>
+
+<div class="card">
+  <h2>Opomba</h2>
+  <p>To je začetni geometrijski izračun. Spring antena je močno odvisna od mase naprave, ohišja, bližine kovine in priključka. Po izdelavi jo uglasi z NanoVNA.</p>
+  <p>Če je minimum SWR previsoko po frekvenci, je antena prekratka. Če je minimum prenizko, je antena predolga.</p>
+</div>
+
+<script>
+function fmt(x,u){ return Number.isFinite(x) ? x.toFixed(2)+" "+u : "napaka"; }
+
+function calc(){
+  const c = 299792458;
+  const freq = parseFloat(document.getElementById("freq").value);
+  const hole = parseFloat(document.getElementById("hole").value);
+  const maxLen = parseFloat(document.getElementById("maxLen").value);
+  const wire = parseFloat(document.getElementById("wire").value);
+
+  const results = document.getElementById("results");
+  const warning = document.getElementById("warning");
+  results.innerHTML = "";
+  warning.innerHTML = "";
+
+  if(freq <= 0 || hole <= 0 || maxLen <= 0 || wire <= 0 || isNaN(freq+hole+maxLen+wire)){
+    warning.innerHTML = '<div class="warn">Vnesi veljavne pozitivne številke.</div>';
+    return;
+  }
+
+  if(hole <= wire * 2){
+    warning.innerHTML = '<div class="warn">Luknja je premajhna za tako žico. Povečaj luknjo ali uporabi tanjšo žico.</div>';
+    return;
+  }
+
+  const lambda = (c / (freq * 1e6)) * 1000;
+  const quarter = lambda / 4;
+
+  // Varnostni odmik, da antena ne drgne po luknji.
+  const clearance = Math.max(0.2, wire * 0.15);
+  const coilOuter = hole - 2 * clearance;
+  const coilDiameter = coilOuter - wire; // premer po sredini žice
+
+  // Cilj: dolžina žice naj bo približno λ/4.
+  // Ker je na voljo omejena dolžina, izračunamo potreben korak p:
+  // wireLen = N * sqrt((pi*D)^2 + p^2), N = maxLen / p
+  // rešitev za p:
+  const circumference = Math.PI * coilDiameter;
+  let pitch = maxLen / Math.sqrt(Math.pow(quarter / circumference, 2) - 1);
+
+  let pitchNote = "";
+  if(!Number.isFinite(pitch) || pitch <= 0){
+    pitch = wire * 1.05;
+    pitchNote = "Za ta premer je obseg navitja že skoraj predolg; uporabljen je minimalni korak.";
+  }
+
+  const minPitch = wire * 1.03; // skoraj tesno navijanje
+  if(pitch < minPitch){
+    pitch = minPitch;
+    pitchNote = "Za dano dolžino bi bili navoji pretesni, zato je uporabljen minimalni praktičen korak.";
+  }
+
+  const turns = maxLen / pitch;
+  const turnsRounded = Math.max(1, Math.round(turns));
+  const realPitch = maxLen / turnsRounded;
+  const oneTurn = Math.sqrt(Math.pow(circumference,2) + Math.pow(realPitch,2));
+  const wireLen = oneTurn * turnsRounded;
+  const estimatedFreq = freq * (quarter / wireLen);
+
+  const spareForSolder = 8;
+  const cutLength = wireLen + spareForSolder;
+
+  const items = [
+    ["Valovna dolžina λ", fmt(lambda,"mm")],
+    ["Četrt valovne dolžine λ/4", fmt(quarter,"mm")],
+    ["Največji zunanji premer navitja", fmt(coilOuter,"mm")],
+    ["Premer navitja po sredini žice", fmt(coilDiameter,"mm")],
+    ["Priporočen korak med navoji", fmt(realPitch,"mm")],
+    ["Število navojev", turnsRounded + " navojev"],
+    ["Dolžina enega navoja", fmt(oneTurn,"mm")],
+    ["Dolžina žice v navitju", fmt(wireLen,"mm")],
+    ["Odreži približno", fmt(cutLength,"mm")],
+    ["Ocenjena resonanca", fmt(estimatedFreq,"MHz")]
+  ];
+
+  for(const [k,v] of items){
+    const div = document.createElement("div");
+    div.className = "out";
+    div.innerHTML = "<b>"+k+"</b><br>"+v;
+    results.appendChild(div);
+  }
+
+  let msgs = [];
+  if(Math.abs(estimatedFreq - freq) / freq > 0.05){
+    msgs.push("Ocenjena resonanca precej odstopa. Po navijanju nujno preveri z NanoVNA.");
+  }
+  if(realPitch < wire * 1.1){
+    msgs.push("Navitje je skoraj tesno skupaj. Pri izdelavi pazi, da se navoji ne dotikajo, razen če želiš tesno navito tuljavo.");
+  }
+  if(pitchNote) msgs.push(pitchNote);
+  msgs.push("Za začetek anteno naredi 5–10 mm daljšo, nato jo krajšaj ali razteguj do minimuma SWR na želeni frekvenci.");
+
+  warning.innerHTML = '<div class="warn">' + msgs.join("<br>") + '</div>';
+}
+
+calc();
+</script>
+
+</body>
+</html>
